@@ -25,3 +25,30 @@
 [submodule "modules/apt"]
 	path = modules/apt
 	url = https://github.com/puppetlabs/puppetlabs-apt
+[submodule "modules/mysql"]
+	path = modules/mysql
+	url = https://github.com/puppetlabs/puppetlabs-mysql
+[submodule "modules/firewall"]
+	path = modules/firewall
+	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/puppetlabs-puppet-firewall.git
+[submodule "modules/profile_icinga"]
+	path = modules/profile_icinga
+	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/profile_icinga.git
+[submodule "modules/icinga2"]
+	path = modules/icinga2
+	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/icinga2.git
+[submodule "modules/inuits-puppet-icinga"]
+	path = modules/inuits-puppet-icinga
+	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/inuits-puppet-icinga.git
+[submodule "modules/inuits-puppet-percona"]
+	path = modules/inuits-puppet-percona
+	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/inuits-puppet-percona.git
+[submodule "modules/sudo"]
+	path = modules/sudo
+	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/sudo.git
+[submodule "modules/inuits-puppet-collectd"]
+	path = modules/inuits-puppet-collectd
+	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/inuits-puppet-collectd.git
+[submodule "modules/profile_collectd"]
+	path = modules/profile_collectd
+	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/profile_collectd.git

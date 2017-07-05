@@ -5,7 +5,7 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "bento/centos-7.3"
   config.vm.network "private_network", ip: "172.16.20.20"
-
+  config.vm.hostname = "localhost.local" # needed for percona
   config.puppet_install.puppet_version = "3.8.7"
   config.vm.provision :puppet do |puppet|
     puppet.module_path = "modules"

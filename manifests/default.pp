@@ -1,7 +1,5 @@
 include apache
 
-# include yum
-
 class yum::repo::remi {
   yumrepo { 'remi':
     baseurl => '',
@@ -40,4 +38,21 @@ class { '::php::globals':
 class { '::php':
   manage_repos => true,
   fpm          => false,
+} ->
+class { 'apache::mod::php':
+  package_name => 'php', # mod_php from remi
+  php_version => 7  # the modulen is called phplib7 not phplib71
+}
+
+
+class { '::mysql::server':
+  root_password           => 'random',
+  remove_default_accounts => true
+}
+
+mysql::db { 'nextcloud':
+  user     => 'nextcloud',
+  password => 'random',
+  host     => 'localhost',
+  grant    => ['ALL'],
 }
