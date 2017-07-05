@@ -34,15 +34,6 @@
 [submodule "modules/profile_icinga"]
 	path = modules/profile_icinga
 	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/profile_icinga.git
-[submodule "modules/icinga2"]
-	path = modules/icinga2
-	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/icinga2.git
-[submodule "modules/inuits-puppet-icinga"]
-	path = modules/inuits-puppet-icinga
-	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/inuits-puppet-icinga.git
-[submodule "modules/inuits-puppet-percona"]
-	path = modules/inuits-puppet-percona
-	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/inuits-puppet-percona.git
 [submodule "modules/sudo"]
 	path = modules/sudo
 	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/sudo.git

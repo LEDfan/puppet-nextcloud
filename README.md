@@ -1,1 +1,4 @@
-profile_mysql uses 11afc2b7965d491abcc8e8aad31d70fbc82e0b3d because of $privileges.each 
+
+TODO:
+ - move code in default.pp to modules/profile_nextcloud
+ - remove obsolote submodules added for profile_mysql
