@@ -1,0 +1,27 @@
+[submodule "modules/apache"]
+	path = modules/apache
+	url = https://github.com/puppetlabs/puppetlabs-apache
+[submodule "modules/stdlib"]
+	path = modules/stdlib
+	url = https://github.com/puppetlabs/puppetlabs-stdlib
+[submodule "modules/archive"]
+	path = modules/archive
+	url = https://github.com/puppetlabs/puppetlabs-archive
+[submodule "modules/concat"]
+	path = modules/concat
+	url = https://github.com/puppetlabs/puppetlabs-concat
+[submodule "modules/inifile"]
+	path = modules/inifile
+	url = https://github.com/puppetlabs/puppetlabs-inifile
+[submodule "modules/php"]
+	path = modules/php
+	url = https://github.com/voxpupuli/puppet-php
+[submodule "modules/yum"]
+	path = modules/yum
+	url = https://github.com/voxpupuli/puppet-yum
+[submodule "modules/zypprepo"]
+	path = modules/zypprepo
+	url = https://github.com/voxpupuli/puppet-zypprepo
+[submodule "modules/apt"]
+	path = modules/apt
+	url = https://github.com/puppetlabs/puppetlabs-apt
