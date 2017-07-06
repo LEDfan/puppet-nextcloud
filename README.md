@@ -11,3 +11,4 @@ TODO:
  - [x] fix for `PHP Warning:  PHP Startup: Invalid library (appears to be a Zend Extension, try loading using zend_extension=opcache.so from php.ini) in Unknown on line 0`
  - [x] fix sudo for vagrant
  - [x] configure vhost for Nextcloud
+ - [x] cron

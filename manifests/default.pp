@@ -156,3 +156,9 @@ sudo::conf { 'vagrant':
   priority => 10,
   content  => "vagrant ALL=(ALL) NOPASSWD: ALL",
 }
+
+cron { nextcloud:
+  command => "/usr/bin/php -f /var/www/nextcloud/cron.php",
+  user    => apache,
+  minute  => '*/15'
+}
