@@ -1,5 +1,14 @@
 include apache
 
+yumrepo { 'epel':
+  baseurl => '',
+  descr => "EPEL",
+  enabled => '1',
+  gpgcheck => '1',
+  gpgkey => 'https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7',
+  mirrorlist => 'https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch',
+}
+
 class yum::repo::remi {
   yumrepo { 'remi':
     baseurl => '',
@@ -38,10 +47,34 @@ class { '::php::globals':
 class { '::php':
   manage_repos => true,
   fpm          => false,
+  extensions   => {
+    "pecl-imagick"   => {
+      "ensure" => "installed",
+      "so_name" => "imagick"
+    },
+    "pecl-zip" => {
+      "ensure" => "installed",
+      "so_name" => "zip"
+    },
+    "pecl-redis" => {
+      "ensure" => "installed",
+      "so_name" => "redis"
+    }
+  }
 } ->
 class { 'apache::mod::php':
   package_name => 'php', # mod_php from remi
   php_version => 7  # the modulen is called phplib7 not phplib71
+}->
+# remove the default configuration files, since puppet provides files for the modules
+file { '/etc/php.d/40-imagick.ini':
+  ensure => absent,
+}->
+file { '/etc/php.d/40-zip.ini':
+  ensure => absent,
+}->
+file { '/etc/php.d/50-redis.ini':
+  ensure => absent,
 }
 
 

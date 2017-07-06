@@ -28,18 +28,3 @@
 [submodule "modules/mysql"]
 	path = modules/mysql
 	url = https://github.com/puppetlabs/puppetlabs-mysql
-[submodule "modules/firewall"]
-	path = modules/firewall
-	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/puppetlabs-puppet-firewall.git
-[submodule "modules/profile_icinga"]
-	path = modules/profile_icinga
-	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/profile_icinga.git
-[submodule "modules/sudo"]
-	path = modules/sudo
-	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/sudo.git
-[submodule "modules/inuits-puppet-collectd"]
-	path = modules/inuits-puppet-collectd
-	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/inuits-puppet-collectd.git
-[submodule "modules/profile_collectd"]
-	path = modules/profile_collectd
-	url = ssh://git@redmine.inuits.eu:2223/puppetmaster/modules/profile_collectd.git

@@ -1,3 +1,0 @@
----
-yum::managed_repos:
-    - 'epel'
