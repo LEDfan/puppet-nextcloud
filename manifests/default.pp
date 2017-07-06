@@ -35,13 +35,13 @@ class yum::repo::remi_php71 {
 
 apache::vhost { 'pp-nc.local': # edit this in /etc/hosts
   port    => '80',
-  docroot => '/var/www/nextcloud',
+  docroot => '/var/www/html/nextcloud',
   directories => [
-    { 'path'     => '/var/www/nextcloud',
+    { 'path'     => '/var/www/html/nextcloud',
       'deny'     => 'from all',
       'allow_override' => ['All'],
       'options' => ['FollowSymLinks'],
-      'setenv' => ['HOME /var/www/nextcloud', 'HTTP_HOME /var/www/nextcloud'],
+      'setenv' => ['HOME /var/www/html/nextcloud', 'HTTP_HOME /var/www/html/nextcloud'],
       'Dav' => 'Off'
      },
   ],
@@ -158,7 +158,18 @@ sudo::conf { 'vagrant':
 }
 
 cron { nextcloud:
-  command => "/usr/bin/php -f /var/www/nextcloud/cron.php",
+  command => "/usr/bin/php -f /var/www/html/nextcloud/cron.php",
   user    => apache,
   minute  => '*/15'
+}
+
+file { "/tmp/nextcloud-12.0.0-2.el7.centos.noarch.rpm":
+  ensure => present,
+  source => ['puppet:///modules/profile_nextcloud/nextcloud-12.0.0-2.el7.centos.noarch.rpm']
+}
+
+package { 'nextcloud':
+  ensure => "12.0.0",
+  provider => "rpm",
+  source => '/tmp/nextcloud-12.0.0-2.el7.centos.noarch.rpm'
 }
