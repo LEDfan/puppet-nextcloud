@@ -73,7 +73,8 @@ class { '::php':
         "opcache.memory_consumption" => 128,
         "opcache.save_comments" => 1,
         "opcache.revalidate_freq" => 1
-      }
+      },
+      "zend" => true
     }
   }
 } ->
@@ -89,6 +90,9 @@ file { '/etc/php.d/40-zip.ini':
   ensure => absent,
 }->
 file { '/etc/php.d/50-redis.ini':
+  ensure => absent,
+}->
+file { '/etc/php.d/10-opcache.ini':
   ensure => absent,
 }
 
@@ -115,4 +119,10 @@ class { '::profile_redis::standalone':
   save_db_to_disk => false,
   status_page_path => false,
   php_redis_pkg_name => false
+}
+
+# icinga breaks the sudoers file for vagrant
+sudo::conf { 'vagrant':
+  priority => 10,
+  content  => "vagrant ALL=(ALL) NOPASSWD: ALL",
 }
