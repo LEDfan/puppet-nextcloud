@@ -28,3 +28,12 @@
 [submodule "modules/mysql"]
 	path = modules/mysql
 	url = https://github.com/puppetlabs/puppetlabs-mysql
+[submodule "modules/redis"]
+	path = modules/redis
+	url = https://github.com/arioch/puppet-redis
+[submodule "modules/collectd"]
+	path = modules/collectd
+	url = https://github.com/KrisBuytaert/puppet-collectd
+[submodule "modules/icinga"]
+	path = modules/icinga
+	url = https://github.com/inuits/puppet-icinga

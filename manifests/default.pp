@@ -1,5 +1,7 @@
 include apache
 
+include ::collectd
+
 yumrepo { 'epel':
   baseurl => '',
   descr => "EPEL",
@@ -101,4 +103,16 @@ mysql::db { 'nextcloud':
   password => 'random',
   host     => 'localhost',
   grant    => ['ALL'],
+}
+
+
+# add a directory for the redis unixsocket
+# create a directory
+file { '/etc/site-conf':
+  ensure => 'directory',
+}->
+class { '::profile_redis::standalone':
+  save_db_to_disk => false,
+  status_page_path => false,
+  php_redis_pkg_name => false
 }
