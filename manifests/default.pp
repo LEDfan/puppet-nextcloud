@@ -59,6 +59,19 @@ class { '::php':
     "pecl-redis" => {
       "ensure" => "installed",
       "so_name" => "redis"
+    },
+    "opcache" => {
+      "ensure" => "installed",
+      "settings" => {
+        # recommended options by Nextcloud https://docs.nextcloud.com/server/12/admin_manual/configuration_server/server_tuning.html?highlight=opcache#enable-php-opcache
+        "opcache.enable" => 1,
+        "opcache.enable_cli" => 1,
+        "opcache.interned_strings_buffer" => 8,
+        "opcache.max_accelerated_files" => 10000,
+        "opcache.memory_consumption" => 128,
+        "opcache.save_comments" => 1,
+        "opcache.revalidate_freq" => 1
+      }
     }
   }
 } ->
