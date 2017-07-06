@@ -63,6 +63,9 @@ class { '::php':
   manage_repos => true,
   fpm          => false,
   extensions   => {
+    "gd" => {},
+    "mbstring" => {},
+    "mysql" => {},
     "pecl-imagick"   => {
       "ensure" => "installed",
       "so_name" => "imagick"
@@ -106,6 +109,20 @@ file { '/etc/php.d/50-redis.ini':
   ensure => absent,
 }->
 file { '/etc/php.d/10-opcache.ini':
+  ensure => absent,
+}->
+file { '/etc/php.d/20-pdo.ini':
+  ensure => present,
+  content => "extension=pdo.so",
+  notify => Service['httpd']
+}->
+file { '/etc/php.d/pdo.ini':
+  ensure => absent,
+}->
+file { '/etc/php.d/20-gd.ini':
+  ensure => absent,
+}->
+file { '/etc/php.d/20-mbstring.ini':
   ensure => absent,
 }
 
