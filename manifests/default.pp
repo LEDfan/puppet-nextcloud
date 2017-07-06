@@ -33,10 +33,23 @@ class yum::repo::remi_php71 {
   }
 }
 
-apache::vhost { 'vhost.example.com':
+apache::vhost { 'pp-nc.local': # edit this in /etc/hosts
   port    => '80',
-  docroot => '/var/www/html',
+  docroot => '/var/www/nextcloud',
+  directories => [
+    { 'path'     => '/var/www/nextcloud',
+      'deny'     => 'from all',
+      'allow_override' => ['All'],
+      'options' => ['FollowSymLinks'],
+      'setenv' => ['HOME /var/www/nextcloud', 'HTTP_HOME /var/www/nextcloud'],
+      'Dav' => 'Off'
+     },
+  ],
+  docroot_owner => 'apache',
+  docroot_group => 'apache',
 }
+
+class { 'apache::mod::headers': }
 
 # ref https://github.com/voxpupuli/puppet-php/issues/344#issuecomment-307268648
 class { '::php::repo::redhat':
