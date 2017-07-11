@@ -20,7 +20,9 @@ class yum::repo::remi_php71 {
   }
 }
 class nextcloud {
-  include apache
+  class { 'apache':
+    manage_user => false
+  }
 
   include ::collectd
 
@@ -125,6 +127,9 @@ class nextcloud {
   }->
   file { '/etc/php.d/20-mbstring.ini':
     ensure => absent,
+  }->
+  file { '/etc/php.d/mysql.ini':
+    ensure => absent,
   }
 
 
@@ -149,8 +154,16 @@ class nextcloud {
   class { '::profile_redis::standalone':
     save_db_to_disk => false,
     status_page_path => false,
-    php_redis_pkg_name => false
-  }
+    php_redis_pkg_name => false,
+    unixsocket_path => '/var/run/redis/redis.sock',
+    unixsocket_perm => 770
+  }->
+  user { "apache":
+    ensure => present,
+    groups => [redis],
+    require => Class['::apache'],
+    notify => Service['httpd']
+}
 
   # icinga breaks the sudoers file for vagrant
   sudo::conf { 'vagrant':
@@ -166,7 +179,7 @@ class nextcloud {
     ensure => present,
     provider => "rpm",
     source => '/tmp/nextcloud-12.0.0-2.el7.centos.noarch.rpm',
-   require => Class['::apache::mod::php']
+    require => Class['::apache::mod::php']
   }
   cron { nextcloud:
     command => "/usr/bin/php -f /var/www/html/nextcloud/cron.php",
