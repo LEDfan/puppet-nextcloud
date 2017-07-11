@@ -163,11 +163,11 @@ class nextcloud {
     source => ['puppet:///modules/nextcloud/nextcloud-12.0.0-2.el7.centos.noarch.rpm']
   }->
   package { 'nextcloud':
-    ensure => "12.0.0",
+    ensure => present,
     provider => "rpm",
     source => '/tmp/nextcloud-12.0.0-2.el7.centos.noarch.rpm',
-    require => Class['::apache::mod::php']
-  }->
+   require => Class['::apache::mod::php']
+  }
   cron { nextcloud:
     command => "/usr/bin/php -f /var/www/html/nextcloud/cron.php",
     user    => apache,

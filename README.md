@@ -16,4 +16,5 @@ TODO:
    - using https://github.com/ledfan/rpm-nextcloud which is forked from https://github.com/mbevc1/nextcloud which is forked from https://build.opensuse.org/package/show/server:php:applications/nextcloud
    - the only change made is the addition of the "full" and "minimal" build, in the full build an apache vhost will be created in the minimal this won't be created.
    - tested the upgrade process by running `vagrant provision` from 11.0.0 to 12.0.0 to daily with a handfull apps enabled
- - [ ] idempotence of nextcloud RPM installation
+ - [x] idempotence of nextcloud RPM installation
+ - [ ] code signing issues
