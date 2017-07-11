@@ -94,7 +94,8 @@ class nextcloud {
           "opcache.revalidate_freq" => 1
         },
         "zend" => true
-      }
+      },
+      "ldap" => {}
     }
   } ->
   class { 'apache::mod::php':
@@ -129,6 +130,9 @@ class nextcloud {
     ensure => absent,
   }->
   file { '/etc/php.d/mysql.ini':
+    ensure => absent,
+  }->
+  file { '/etc/php.d/ldap .ini':
     ensure => absent,
   }
 
