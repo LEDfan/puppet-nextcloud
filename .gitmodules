@@ -37,3 +37,42 @@
 [submodule "modules/icinga"]
 	path = modules/icinga
 	url = https://github.com/inuits/puppet-icinga
+[submodule "vagrant/modules/apache"]
+	path = vagrant/modules/apache
+	url = https://github.com/puppetlabs/puppetlabs-apache
+[submodule "vagrant/modules/stdlib"]
+	path = vagrant/modules/stdlib
+	url = https://github.com/puppetlabs/puppetlabs-stdlib
+[submodule "vagrant/modules/archive"]
+	path = vagrant/modules/archive
+	url = https://github.com/voxpupuli/puppet-archive
+[submodule "vagrant/modules/concat"]
+	path = vagrant/modules/concat
+	url = https://github.com/puppetlabs/puppetlabs-concat
+[submodule "vagrant/modules/inifile"]
+	path = vagrant/modules/inifile
+	url = https://github.com/puppetlabs/puppetlabs-inifile
+[submodule "vagrant/modules/php"]
+	path = vagrant/modules/php
+	url = https://github.com/voxpupuli/puppet-php
+[submodule "vagrant/modules/yum"]
+	path = vagrant/modules/yum
+	url = https://github.com/voxpupuli/puppet-yum
+[submodule "vagrant/modules/zypprepo"]
+	path = vagrant/modules/zypprepo
+	url = https://github.com/voxpupuli/puppet-zypprepo
+[submodule "vagrant/modules/apt"]
+	path = vagrant/modules/apt
+	url = https://github.com/puppetlabs/puppetlabs-apt
+[submodule "vagrant/modules/mysql"]
+	path = vagrant/modules/mysql
+	url = https://github.com/puppetlabs/puppetlabs-mysql
+[submodule "vagrant/modules/redis"]
+	path = vagrant/modules/redis
+	url = https://github.com/arioch/puppet-redis
+[submodule "vagrant/modules/collectd"]
+	path = vagrant/modules/collectd
+	url = https://github.com/KrisBuytaert/puppet-collectd
+[submodule "vagrant/modules/icinga"]
+	path = vagrant/modules/icinga
+	url = https://github.com/inuits/puppet-icinga

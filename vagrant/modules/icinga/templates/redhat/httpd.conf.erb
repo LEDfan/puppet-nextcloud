@@ -1,0 +1,48 @@
+#
+# Managed by Puppet
+#
+
+ScriptAlias /icinga/cgi-bin "<%= scope.lookupvar('icinga::usrlib') %>/icinga/cgi"
+
+<Directory "<%= scope.lookupvar('icinga::params::usrlib') %>/icinga/cgi">
+# SSLRequireSSL
+  Options ExecCGI
+  AllowOverride None
+  Order allow,deny
+  Allow from all
+<% if scope.lookupvar('icinga::use_auth')  %>
+ Order deny,allow
+ Deny from all
+ Allow from 127.0.0.1
+  AuthName "Icinga Access"
+  AuthType Basic
+  AuthUserFile /etc/icinga/htpasswd.users
+  Require valid-user
+<% end %>
+</Directory>
+
+Alias /icinga "/usr/share/icinga/"
+
+<Directory "/usr/share/icinga/">
+# SSLRequireSSL
+  Options None
+  AllowOverride None
+  Order allow,deny
+  Allow from all
+<% if scope.lookupvar('icinga::use_auth')  %>
+ Order deny,allow
+ Deny from all
+ Allow from 127.0.0.1
+  AuthName "Icinga Access"
+  AuthType Basic
+  AuthUserFile /etc/icinga/htpasswd.users
+  Require valid-user
+<% end %>
+</Directory>
+
+<ifmodule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/text text/html text/plain text/xml text/css text/json application/x-javascript application/javascript
+  BrowserMatch ^Mozilla/4 gzip-only-text/html
+  BrowserMatch ^Mozilla/4\.0[678] no-gzip
+  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+</ifmodule>

@@ -1,0 +1,32 @@
+# apache configuration for icinga
+
+ScriptAlias /cgi-bin/icinga /usr/lib/cgi-bin/icinga
+ScriptAlias /icinga/cgi-bin /usr/lib/cgi-bin/icinga
+
+# Where the stylesheets (config files) reside
+Alias /icinga/stylesheets /etc/icinga/stylesheets
+
+# Where the HTML pages live
+Alias /icinga /usr/share/icinga/htdocs
+
+<DirectoryMatch (/usr/share/icinga/htdocs|/usr/lib/cgi-bin/icinga|/etc/icinga/stylesheets)>
+  Options FollowSymLinks
+
+  DirectoryIndex index.html
+
+  AllowOverride AuthConfig
+  Order Allow,Deny
+  Allow From All
+
+  AuthName "Icinga Access"
+  AuthType Basic
+  AuthUserFile /etc/icinga/htpasswd.users
+  require valid-user
+</DirectoryMatch>
+
+<ifmodule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/text text/html text/plain text/xml text/css text/json application/x-javascript application/javascript
+  BrowserMatch ^Mozilla/4 gzip-only-text/html
+  BrowserMatch ^Mozilla/4\.0[678] no-gzip
+  BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
+</ifmodule>

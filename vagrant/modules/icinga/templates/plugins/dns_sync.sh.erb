@@ -1,0 +1,15 @@
+#!/bin/bash
+<% views=@full_zonelist.keys.select{ |i| i[/^view/] } -%>
+<% domains=[] -%>
+<% customers=[] -%>
+<% views.each do |view| -%>
+<% customers += @full_zonelist[view] -%>
+<% end -%>
+<% customers.each do |customer| -%>
+<%   domains+= @full_zonelist[customer].keys -%>
+<% end -%>
+<% domains.map! {|domain| domain[/[^:]+/]} -%>
+MSG=$(/usr/lib64/nagios/plugins/check_dns_sync.pl -T 3 <%= (Array(domains)-Array(@ignored_domains)).uniq.sort.join(" ") %>)
+RET_VAL=$?
+echo "<%= @fqdn %>;dns sync;$RET_VAL;$MSG" | /usr/sbin/send_nsca    -H <%= @icinga_host %> -p 5667 -d ";"
+
