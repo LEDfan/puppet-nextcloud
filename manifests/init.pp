@@ -1,4 +1,4 @@
-# we disable the linter here because we can't change the names of these two
+  # we disable the linter here because we can't change the names of these two
 # classes since the PHP module epxect them in this way
 # lint:ignore:autoloader_layout
 # class yum::repo::remi
@@ -70,7 +70,9 @@ class nextcloud (
     class { '::php::repo::redhat':
       yum_repo => 'remi_php71',
     }
-  }->
+
+    Class['::php::repo::redhat']->Class['::php::globals']
+  }
   class { '::php::globals':
     php_version => '7.1',
     config_root => '/etc/php/7.1',
