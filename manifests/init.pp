@@ -111,7 +111,7 @@ class nextcloud (
   } ->
   class { 'apache::mod::php':
     package_name => 'php', # mod_php from remi
-    php_version  => 7  # the modulen is called phplib7 not phplib71
+    php_version  => '7'  # the modulen is called phplib7 not phplib71
   }->
   # remove the default configuration files, since puppet provides files for the modules
   file { '/etc/php.d/40-imagick.ini':
