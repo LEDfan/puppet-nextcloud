@@ -186,12 +186,6 @@ class nextcloud (
     notify  => Service['httpd']
 }
 
-  # icinga breaks the sudoers file for vagrant
-  # TODO add check for this
-  #sudo::conf { 'vagrant':
-  #    priority => 10,
-  #  content  => 'vagrant ALL=(ALL) NOPASSWD: ALL',
-  #}
 
   if ($manage_repos) {
     file { '/tmp/nextcloud-12.0.0-2.el7.centos.noarch.rpm':
@@ -217,11 +211,13 @@ class nextcloud (
     minute  => '*/15'
   }
 
+  package { 'iptables-services':
+    ensure  => installed,
+  }->
   firewall { '443-httpd':
     dport  => '443',
     action => 'accept',
-  }
-
+  }->
   firewall { '80-httpd':
     dport  => '80',
     action => 'accept',
