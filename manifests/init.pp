@@ -65,16 +65,18 @@ class nextcloud (
 
   class { 'apache::mod::headers': }
 
-  # ref https://github.com/voxpupuli/puppet-php/issues/344#issuecomment-307268648
-  class { '::php::repo::redhat':
-    yum_repo => 'remi_php71',
-  } ->
+  if ($manage_repos) {
+    # ref https://github.com/voxpupuli/puppet-php/issues/344#issuecomment-307268648
+    class { '::php::repo::redhat':
+      yum_repo => 'remi_php71',
+    }
+  }->
   class { '::php::globals':
     php_version => '7.1',
     config_root => '/etc/php/7.1',
   }->
   class { '::php':
-    manage_repos => true,
+    manage_repos => $manage_repos,
     fpm          => false,
     composer     => false,
     extensions   => {
