@@ -217,12 +217,12 @@ class nextcloud (
     minute  => '*/15'
   }
 
-  firewall { '015 httpd':
+  firewall { '443-httpd':
     dport  => '443',
     action => 'accept',
   }
 
-  firewall { '015 httpd':
+  firewall { '80-httpd':
     dport  => '80',
     action => 'accept',
   }
