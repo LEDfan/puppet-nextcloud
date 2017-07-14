@@ -76,6 +76,7 @@ class nextcloud (
   class { '::php':
     manage_repos => true,
     fpm          => false,
+    composer     => false,
     extensions   => {
       'gd'             => {},
       'mbstring'       => {},
