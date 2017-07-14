@@ -148,7 +148,7 @@ class nextcloud (
   file { '/etc/php.d/mysql.ini':
     ensure => absent,
   }->
-  file { '/etc/php.d/ldap .ini':
+  file { '/etc/php.d/ldap.ini':
     ensure => absent,
   }
 
@@ -215,6 +215,16 @@ class nextcloud (
     command => '/usr/bin/php -f /var/www/html/nextcloud/cron.php',
     user    => apache,
     minute  => '*/15'
+  }
+
+  firewall { '015 httpd':
+    dport  => '443',
+    action => 'accept',
+  }
+
+  firewall { '015 httpd':
+    dport  => '80',
+    action => 'accept',
   }
 
 
