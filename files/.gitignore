@@ -1,1 +1,3 @@
 *.rpm
+ca.cert.pem
+ca.key.pem

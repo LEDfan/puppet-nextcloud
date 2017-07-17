@@ -1,4 +1,4 @@
-  # we disable the linter here because we can't change the names of these two
+# we disable the linter here because we can't change the names of these two
 # classes since the PHP module epxect them in this way
 # lint:ignore:autoloader_layout
 # class yum::repo::remi
@@ -28,7 +28,9 @@ class yum::repo::remi_php71 {
 class nextcloud (
   $servername,
   $manage_repos = true,
-  $setup_mysql =  true
+  $setup_mysql =  true,
+  $import_ca = false,
+  $ca_cert_path = undef
   ) {
   class { 'apache':
     manage_user => false
@@ -47,20 +49,47 @@ class nextcloud (
     }
   }
 
-  apache::vhost {$servername:
-    port        => '80',
-    docroot     => '/var/www/html/nextcloud',
-    directories => [
+
+
+  file { ['/etc/httpd', '/etc/httpd/certs']:
+    ensure  => directory,
+  }->
+  profile_openssl::self_signed_certificate { 'nextcloud':
+    key_owner         => 'root',
+    key_group         => 'root',
+    key_mode          => '0600',
+    cert_country      => 'BE',
+    cert_state        => 'BE',
+    cert_common_names => [$servername],
+    key_path          => '/etc/httpd/certs/nextcloud.key',
+    cert_path         => '/etc/httpd/certs/nextcloud.cert',
+    notify            => Service['httpd'],
+  }->
+  apache::vhost {"${servername}-ssl":
+    servername    => $servername,
+    port          => '443',
+    docroot       => '/var/www/html/nextcloud',
+    directories   => [
       { 'path'           => '/var/www/html/nextcloud',
         'deny'           => 'from all',
         'allow_override' => ['All'],
         'options'        => ['FollowSymLinks'],
         'setenv'         => ['HOME /var/www/html/nextcloud', 'HTTP_HOME /var/www/html/nextcloud'],
-        'Dav'            => 'Off'
+        'Dav'            => 'Off',
       },
     ],
     docroot_owner => 'apache',
     docroot_group => 'apache',
+    ssl           => true,
+    ssl_cert      => '/etc/httpd/certs/nextcloud.cert',
+    ssl_key       => '/etc/httpd/certs/nextcloud.key',
+  }->
+  apache::vhost {"${servername}-redirect":
+    servername    => $servername,
+    port            => '80',
+    docroot         => '/var/www/html/nextcloud',
+    redirect_status => 'permanent',
+    redirect_dest   => "https://${servername}"
   }
 
   class { 'apache::mod::headers': }
@@ -169,7 +198,7 @@ class nextcloud (
 
   # add a directory for the redis unixsocket
   # create a directory
-  file { '/etc/site-conf':
+  file { '/var/run/redis':
     ensure => 'directory',
   }->
   class { '::profile_redis::standalone':
@@ -184,7 +213,7 @@ class nextcloud (
     groups   => [redis],
     require  => Class['::apache'],
     notify  => Service['httpd']
-}
+  }
 
 
   if ($manage_repos) {
@@ -203,6 +232,17 @@ class nextcloud (
       ensure   => present,
       provider => 'yum',
       require  => Class['::apache::mod::php']
+    }
+  }
+  if ($import_ca) {
+    file { '/tmp/import-ca.cert':
+      ensure => present,
+      source => $ca_cert_path
+    }->
+    exec { 'import-ca-file':
+      command => "/usr/bin/php /var/www/html/nextcloud/occ security:certificates:import /tmp/import-ca.cert",
+      user => apache,
+      group => apache
     }
   }
   cron { 'nextcloud':
