@@ -251,13 +251,16 @@ class nextcloud (
     minute  => '*/15'
   }
 
-  package { 'iptables-services':
-    ensure  => installed,
-  }->
+  if !defined(Class['firewall']) {
+    class { 'firewall':
+    }
+    Class['firewall']->Firewall['443-httpd']
+    Class['firewall']->Firewall['80-httpd']
+  }
   firewall { '443-httpd':
     dport  => '443',
     action => 'accept',
-  }->
+  }
   firewall { '80-httpd':
     dport  => '80',
     action => 'accept',
