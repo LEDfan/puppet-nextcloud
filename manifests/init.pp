@@ -209,7 +209,6 @@ class nextcloud (
       password => $database_pass,
       dbname   => $database_name,
       host     => $::fqdn,
-      db_host  => $external_db_host,
       grant    => ['ALL'],
       tag      => "${::datacenter}_${::environment}",
     }
