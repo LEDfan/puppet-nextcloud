@@ -27,10 +27,18 @@ class yum::repo::remi_php71 {
 # class nextcloud
 class nextcloud (
   $servername,
-  $manage_repos = true,
-  $setup_mysql =  true,
-  $import_ca = false,
-  $ca_cert_path = undef
+  $manage_repos       = true,
+  $local_mysql        = true,
+  $import_ca          = false,
+  $ca_cert_path       = undef,
+  $database_name      = 'nextcloud',
+  $database_user      = 'nextcloud',
+  $database_pass      = undef,
+  $admin_username     = undef,
+  $admin_pass         = undef,
+  $data_dir           = '/srv/nextcloud-data',
+  $database_root_pass = undef,
+  $external_db_host   = undef
   ) {
   class { 'apache':
     manage_user => false
@@ -85,7 +93,7 @@ class nextcloud (
     ssl_key       => '/etc/httpd/certs/nextcloud.key',
   }->
   apache::vhost {"${servername}-redirect":
-    servername    => $servername,
+    servername      => $servername,
     port            => '80',
     docroot         => '/var/www/html/nextcloud',
     redirect_status => 'permanent',
@@ -111,22 +119,22 @@ class nextcloud (
     fpm          => false,
     composer     => false,
     extensions   => {
-      'gd'             => {},
-      'mbstring'       => {},
-      'mysql'          => {},
-      'pecl-imagick'   => {
+      'gd'           => {},
+      'mbstring'     => {},
+      'mysql'        => {},
+      'pecl-imagick' => {
         'ensure'  => 'installed',
         'so_name' => 'imagick'
       },
-      'pecl-zip'       => {
+      'pecl-zip'     => {
         'ensure'  => 'installed',
         'so_name' => 'zip'
       },
-      'pecl-redis'     => {
+      'pecl-redis'   => {
         'ensure'  => 'installed',
         'so_name' => 'redis'
       },
-      'opcache'   => {
+      'opcache'      => {
         'ensure'   => 'installed',
         'settings' => {
           # recommended options by Nextcloud https://docs.nextcloud.com/server/12/admin_manual/configuration_server/server_tuning.html?highlight=opcache#enable-php-opcache
@@ -140,7 +148,7 @@ class nextcloud (
         },
         'zend'     => true
       },
-      'ldap' => {}
+      'ldap'         => {}
     }
   } ->
   class { 'apache::mod::php':
@@ -181,18 +189,31 @@ class nextcloud (
     ensure => absent,
   }
 
-  if ($setup_mysql) {
+  if ($local_mysql) {
     class { '::mysql::server':
-      root_password           => 'random',
+      root_password           => $database_root_pass,
       remove_default_accounts => true
     }
 
-    mysql::db { 'nextcloud':
-      user     => 'nextcloud',
-      password => 'random',
+    mysql::db { $database_name:
+      user     => $database_user,
+      password => $database_pass,
       host     => 'localhost',
       grant    => ['ALL'],
     }
+    $database_host = 'localhost'
+    Mysql::Db[$database_name]->exec['install-nextcloud']
+  } else {
+    @@::mysql::db { "${::environment}_nextcloud_${::fqdn}":
+      user     => $database_user,
+      password => $database_pass,
+      dbname   => $database_name,
+      host     => $external_db_host,
+      grant    => ['ALL'],
+      tag      => "${::datacenter}_${::environment}",
+    }
+    $database_host = $external_db_host
+    Mysql::Db["${::environment}_nextcloud_${::fqdn}"]->exec['install-nextcloud']
   }
 
 
@@ -209,13 +230,13 @@ class nextcloud (
     unixsocket_perm    => 770
   }->
   user { 'apache':
-    ensure   => present,
-    groups   => [redis],
-    require  => Class['::apache'],
+    ensure  => present,
+    groups  => [redis],
+    require => Class['::apache'],
     notify  => Service['httpd']
   }
 
-
+  # install Nextcloud RPM
   if ($manage_repos) {
     file { '/tmp/nextcloud-12.0.0-2.el7.centos.noarch.rpm':
       ensure => present,
@@ -234,17 +255,43 @@ class nextcloud (
       require  => Class['::apache::mod::php']
     }
   }
+
+  # create datadirectory
+  file { $data_dir:
+    ensure => directory,
+    owner  => 'apache',
+    group  => 'apache'
+  }
+
+  # install/configure Nexxtcloud
+  exec { 'install-nextcloud':
+    command => "/usr/bin/php /var/www/html/nextcloud/occ maintenance:install --database=mysql --database-name=${database_name} --database-host=${database_host} --database-user=${database_user} --database-pass=${database_pass} --admin-user=${admin_username} --admin-pass=${admin_pass} --data-dir=${data_dir} && touch /var/www/html/nextcloud/puppet_installed_check",
+    user    => apache,
+    group   => apache,
+    creates => '/var/www/html/nextcloud/puppet_installed_check'
+  }->
+  file { '/tmp/nextcloud-import-config':
+    ensure  => present,
+    content => template('nextcloud/nextcloud-import.json.erb'),
+  }->
+  exec { 'import-ca-file':
+    command => '/usr/bin/php /var/www/html/nextcloud/occ config:import /tmp/nextcloud-import-config',
+    user    => apache,
+    group   => apache
+  }
   if ($import_ca) {
     file { '/tmp/import-ca.cert':
-      ensure => present,
-      source => $ca_cert_path
+      ensure  => present,
+      source  => $ca_cert_path,
+      require => Exec['install-nextcloud']
     }->
     exec { 'import-ca-file':
-      command => "/usr/bin/php /var/www/html/nextcloud/occ security:certificates:import /tmp/import-ca.cert",
-      user => apache,
-      group => apache
+      command => '/usr/bin/php /var/www/html/nextcloud/occ security:certificates:import /tmp/import-ca.cert',
+      user    => apache,
+      group   => apache
     }
   }
+
   cron { 'nextcloud':
     command => '/usr/bin/php -f /var/www/html/nextcloud/cron.php',
     user    => apache,
