@@ -215,12 +215,6 @@ class nextcloud (
     $database_host = $external_db_host
   }
 
-
-  # add a directory for the redis unixsocket
-  # create a directory
-  file { '/var/run/redis':
-    ensure => 'directory',
-  }->
   class { '::profile_redis::standalone':
     save_db_to_disk    => false,
     status_page_path   => false,
