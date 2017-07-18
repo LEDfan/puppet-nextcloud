@@ -213,7 +213,7 @@ class nextcloud (
       tag      => "${::datacenter}_${::environment}",
     }
     $database_host = $external_db_host
-    Mysql::Db["${::environment}_nextcloud_${::fqdn}"]->exec['install-nextcloud']
+    Mysql::Db["${::environment}_nextcloud_${::fqdn}"]->Exec['install-nextcloud']
   }
 
 
