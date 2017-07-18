@@ -256,21 +256,15 @@ class nextcloud (
     group  => 'apache'
   }
 
-  # install/configure Nexxtcloud
+  # install/configure Nextcloud
   exec { 'install-nextcloud':
     command => "/usr/bin/php /var/www/html/nextcloud/occ maintenance:install --database=mysql --database-name=${database_name} --database-host=${database_host} --database-user=${database_user} --database-pass=${database_pass} --admin-user=${admin_username} --admin-pass=${admin_pass} --data-dir=${data_dir} && touch /var/www/html/nextcloud/puppet_installed_check",
     user    => apache,
     group   => apache,
     creates => '/var/www/html/nextcloud/puppet_installed_check'
   }->
-  file { '/tmp/nextcloud-import-config':
-    ensure  => present,
-    content => template('nextcloud/nextcloud-import.json.erb'),
-  }->
-  exec { 'import-nc-config':
-    command => '/usr/bin/php /var/www/html/nextcloud/occ config:import /tmp/nextcloud-import-config',
-    user    => apache,
-    group   => apache
+  nextcloud::import_config {'import_redis_trusted_domains':
+    file_name => template('nextcloud/nextcloud-import.json.erb')
   }
   if ($import_ca) {
     file { '/tmp/import-ca.cert':
