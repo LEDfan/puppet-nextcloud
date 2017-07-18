@@ -202,7 +202,7 @@ class nextcloud (
       grant    => ['ALL'],
     }
     $database_host = 'localhost'
-    Mysql::Db[$database_name]->exec['install-nextcloud']
+    Mysql::Db[$database_name]->Exec['install-nextcloud']
   } else {
     @@::mysql::db { "${::environment}_nextcloud_${::fqdn}":
       user     => $database_user,
@@ -213,7 +213,6 @@ class nextcloud (
       tag      => "${::datacenter}_${::environment}",
     }
     $database_host = $external_db_host
-    Mysql::Db["${::environment}_nextcloud_${::fqdn}"]->Exec['install-nextcloud']
   }
 
 
