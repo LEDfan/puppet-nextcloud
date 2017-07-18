@@ -274,7 +274,7 @@ class nextcloud (
     ensure  => present,
     content => template('nextcloud/nextcloud-import.json.erb'),
   }->
-  exec { 'import-ca-file':
+  exec { 'import-nc-config':
     command => '/usr/bin/php /var/www/html/nextcloud/occ config:import /tmp/nextcloud-import-config',
     user    => apache,
     group   => apache
