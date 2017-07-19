@@ -5,7 +5,7 @@ define nextcloud::import_config ($file_name){
     content => $file_name,
   }->
   exec { "import-nc-config-${title}":
-    command => '/usr/bin/php /var/www/html/nextcloud/occ config:import /tmp/nextcloud-import-config',
+    command => "/usr/bin/php /var/www/html/nextcloud/occ config:import /tmp/nextcloud-import-config-${title}",
     user    => apache,
     group   => apache
   }

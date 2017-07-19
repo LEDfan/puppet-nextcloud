@@ -41,7 +41,11 @@ class nextcloud (
   $external_db_host   = undef,
   # wether to redirect non ssl traffic to ssl, or support access using non-ssl access
   $redirect_ssl       = true,
+  $trusted_domains    = [],
   ) {
+
+  $all_trusted_domains = concat($trusted_domains, $servername)
+
   class { 'apache':
     manage_user => false
   }
