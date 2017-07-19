@@ -38,7 +38,9 @@ class nextcloud (
   $admin_pass         = undef,
   $data_dir           = '/srv/nextcloud-data',
   $database_root_pass = undef,
-  $external_db_host   = undef
+  $external_db_host   = undef,
+  # wether to redirect non ssl traffic to ssl, or support access using non-ssl access
+  $redirect_ssl       = true,
   ) {
   class { 'apache':
     manage_user => false
@@ -91,13 +93,32 @@ class nextcloud (
     ssl           => true,
     ssl_cert      => '/etc/httpd/certs/nextcloud.cert',
     ssl_key       => '/etc/httpd/certs/nextcloud.key',
-  }->
-  apache::vhost {"${servername}-redirect":
-    servername      => $servername,
-    port            => '80',
-    docroot         => '/var/www/html/nextcloud',
-    redirect_status => 'permanent',
-    redirect_dest   => "https://${servername}"
+  }
+  if ($redirect_ssl) {
+    apache::vhost {"${servername}-redirect":
+      servername      => $servername,
+      port            => '80',
+      docroot         => '/var/www/html/nextcloud',
+      redirect_status => 'permanent',
+      redirect_dest   => "https://${servername}"
+    }
+  } else {
+    apache::vhost {"${servername}-no-ssl":
+      servername    => $servername,
+      port          => '80',
+      docroot       => '/var/www/html/nextcloud',
+      directories   => [
+        { 'path'           => '/var/www/html/nextcloud',
+          'deny'           => 'from all',
+          'allow_override' => ['All'],
+          'options'        => ['FollowSymLinks'],
+          'setenv'         => ['HOME /var/www/html/nextcloud', 'HTTP_HOME /var/www/html/nextcloud'],
+          'Dav'            => 'Off',
+        },
+      ],
+      docroot_owner => 'apache',
+      docroot_group => 'apache',
+    }
   }
 
   class { 'apache::mod::headers': }
