@@ -146,7 +146,6 @@ class nextcloud (
     extensions   => {
       'gd'           => {},
       'mbstring'     => {},
-      'mysqlnd'      => {},
       'pecl-imagick' => {
         'ensure'  => 'installed',
         'so_name' => 'imagick'
@@ -173,7 +172,6 @@ class nextcloud (
         },
         'zend'     => true
       },
-      'ldap'         => {}
     }
   } ->
   class { 'apache::mod::php':
@@ -207,11 +205,15 @@ class nextcloud (
   file { '/etc/php.d/20-mbstring.ini':
     ensure => absent,
   }->
-  file { '/etc/php.d/20-mysqlnd.ini':
-    ensure => absent,
+  # we don't use the puppet php module to install php-mysqlnd and php-ldap
+  # because the puppte module creates it's own config file (and doesn't remove
+  # the one from the OS), but doesn't add the priority to the filename
+  # see https://github.com/voxpupuli/puppet-php/issues/272
+  package { 'php-mysqlnd':
+    ensure => present,
   }->
-  file { '/etc/php.d/20-ldap.ini':
-    ensure => absent,
+  package { 'php-ldap':
+    ensure => present,
   }
 
   if ($local_mysql) {
