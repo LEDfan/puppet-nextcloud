@@ -1,13 +1,7 @@
 {
     "system": {
         "trusted_domains": <%= @all_trusted_domains %>,
-        "overwrite.cli.url": "https:\/\/<%= @servername %>",
-        "memcache.local": "\\OC\\Memcache\\Redis",
-        "memcache.locking": "\\OC\\Memcache\\Redis",
-        "redis": {
-            "host": "\/var\/run\/redis\/redis.sock",
-            "port": 0
-        }
+        "overwrite.cli.url": "https:\/\/<%= @servername %>"
     },
     "apps": {
       "core": {

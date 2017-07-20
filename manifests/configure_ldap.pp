@@ -1,4 +1,4 @@
-# configures and enables the ldap user backend
+# class to enable and configure the ldap user backend
 class nextcloud::configure_ldap (
   $ldap_password,
   $ldap_base,
@@ -7,7 +7,6 @@ class nextcloud::configure_ldap (
   $ldap_host,
   $ldap_login_filter,
   $ldap_userlist_filter) {
-
     $ldap_password_base64 = strip(base64('encode', $ldap_password))
     nextcloud::enable_app { 'ldap':
       app_name => 'user_ldap',
