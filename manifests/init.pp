@@ -1,33 +1,7 @@
-# we disable the linter here because we can't change the names of these two
-# classes since the PHP module epxect them in this way
-# lint:ignore:autoloader_layout
-# class yum::repo::remi
-class yum::repo::remi {
-  yumrepo { 'remi':
-    baseurl    => '',
-    descr      => 'Remi\'s repository for Centos 7 - x86_65',
-    enabled    => '1',
-    gpgcheck   => '1',
-    gpgkey     => 'https://rpms.remirepo.net/RPM-GPG-KEY-remi',
-    mirrorlist => 'http://rpms.remirepo.net/enterprise/7/remi/mirror',
-  }
-}
-# class yum::repo::remi_php71
-class yum::repo::remi_php71 {
-  yumrepo { 'remi_php71':
-    baseurl    => '',
-    descr      => 'Remi\'s PHP 7.1 RPM repository for Centos 7 - x86_65',
-    enabled    => '1',
-    gpgcheck   => '1',
-    gpgkey     => 'https://rpms.remirepo.net/RPM-GPG-KEY-remi',
-    mirrorlist => 'http://rpms.remirepo.net/enterprise/7/php71/mirror',
-  }
-}
-# lint:endignore
 # class nextcloud
 class nextcloud (
   $servername,
-  $manage_repos       = true,
+  #$manage_repos       = true,
   $local_mysql        = true,
   $import_ca          = false,
   $ca_cert_path       = undef,
@@ -42,6 +16,7 @@ class nextcloud (
   # wether to redirect non ssl traffic to ssl, or support access using non-ssl access
   $redirect_ssl       = true,
   $trusted_domains    = [],
+  $install_method     = 'filesystem' # can be filesystem or repo
   ) {
 
   $all_trusted_domains = concat($trusted_domains, $servername)
@@ -51,19 +26,6 @@ class nextcloud (
   }
 
   include ::collectd
-
-  if ($manage_repos) {
-    yumrepo { 'epel':
-      baseurl    => '',
-      descr      => 'EPEL',
-      enabled    => '1',
-      gpgcheck   => '1',
-      gpgkey     => 'https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-7',
-      mirrorlist => 'https://mirrors.fedoraproject.org/metalink?repo=epel-7&arch=$basearch',
-    }
-  }
-
-
 
   file { ['/etc/httpd', '/etc/httpd/certs']:
     ensure  => directory,
@@ -127,20 +89,12 @@ class nextcloud (
 
   class { 'apache::mod::headers': }
 
-  if ($manage_repos) {
-    # ref https://github.com/voxpupuli/puppet-php/issues/344#issuecomment-307268648
-    class { '::php::repo::redhat':
-      yum_repo => 'remi_php71',
-    }
-
-    Class['::php::repo::redhat']->Class['::php::globals']
-  }
   class { '::php::globals':
     php_version => '7.1',
     config_root => '/etc/php/7.1',
   }->
   class { '::php':
-    manage_repos => $manage_repos,
+    manage_repos => false,
     fpm          => false,
     composer     => false,
     extensions   => {
@@ -257,7 +211,7 @@ class nextcloud (
   }
 
   # install Nextcloud RPM
-  if ($manage_repos) {
+  if ($install_method == 'filesystem') {
     file { '/tmp/nextcloud-12.0.0-2.el7.centos.noarch.rpm':
       ensure => present,
       source => ['puppet:///modules/nextcloud/nextcloud-12.0.0-2.el7.centos.noarch.rpm']
@@ -266,14 +220,16 @@ class nextcloud (
       ensure   => present,
       provider => 'rpm',
       source   => '/tmp/nextcloud-12.0.0-2.el7.centos.noarch.rpm',
-      require  => Class['::apache::mod::php']
+      require  => [Class['::apache::mod::php'], Package['php-mysqlnd'], Package['php-ldap']]
     }
-  } else {
+  } elsif ($install_method == 'repo') {
     package { 'nextcloud':
       ensure   => present,
       provider => 'yum',
-      require  => Class['::apache::mod::php']
+      require  => [Class['::apache::mod::php'], Package['php-mysqlnd'], Package['php-ldap']]
     }
+  } else {
+    fail('Install_method is not source or repo') # TODO use proper validation in the header
   }
 
   # create datadirectory
@@ -288,7 +244,8 @@ class nextcloud (
     command => "/usr/bin/php /var/www/html/nextcloud/occ maintenance:install --database=mysql --database-name=${database_name} --database-host=${database_host} --database-user=${database_user} --database-pass=${database_pass} --admin-user=${admin_username} --admin-pass=${admin_pass} --data-dir=${data_dir} && touch /var/www/html/nextcloud/puppet_installed_check",
     user    => apache,
     group   => apache,
-    creates => '/var/www/html/nextcloud/puppet_installed_check'
+    creates => '/var/www/html/nextcloud/puppet_installed_check',
+    require => Package['nextcloud']
   }->
   nextcloud::import_config {'import_redis_trusted_domains':
     file_name => template('nextcloud/nextcloud-import.json.erb')
