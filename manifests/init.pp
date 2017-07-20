@@ -146,7 +146,7 @@ class nextcloud (
     extensions   => {
       'gd'           => {},
       'mbstring'     => {},
-      'mysql'        => {},
+      'mysqlnd'      => {},
       'pecl-imagick' => {
         'ensure'  => 'installed',
         'so_name' => 'imagick'
@@ -207,10 +207,10 @@ class nextcloud (
   file { '/etc/php.d/20-mbstring.ini':
     ensure => absent,
   }->
-  file { '/etc/php.d/mysql.ini':
+  file { '/etc/php.d/20-mysqlnd.ini':
     ensure => absent,
   }->
-  file { '/etc/php.d/ldap.ini':
+  file { '/etc/php.d/20-ldap.ini':
     ensure => absent,
   }
 
