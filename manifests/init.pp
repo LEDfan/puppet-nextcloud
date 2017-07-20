@@ -301,6 +301,7 @@ class nextcloud (
     }->
     exec { 'import-ca-file':
       command => '/usr/bin/php /var/www/html/nextcloud/occ security:certificates:import /tmp/import-ca.cert',
+      unless  => '/usr/bin/php /var/www/html/nextcloud/occ security:certificates | grep -q import-ca.cert', # import-ca.cert is the filename
       user    => apache,
       group   => apache
     }
