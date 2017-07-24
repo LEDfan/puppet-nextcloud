@@ -8,6 +8,7 @@ class nextcloud (
   $admin_username     = undef,
   $admin_pass         = undef,
   $data_dir           = '/srv/nextcloud-data',
+  $create_data_dir    = true, # data_dir parameter is still needed
   $database_host      = undef,
   # wether to redirect non ssl traffic to ssl, or support access using non-ssl access
   $redirect_ssl       = true,
@@ -38,11 +39,13 @@ class nextcloud (
     fail('Install_method is not source or repo') # TODO use proper validation in the header
   }
 
-  # create datadirectory
-  file { $data_dir:
-    ensure => directory,
-    owner  => 'apache',
-    group  => 'apache'
+  if ($create_data_dir) {
+      # create datadirectory
+    file { $data_dir:
+      ensure => directory,
+      owner  => 'apache',
+      group  => 'apache'
+    }
   }
 
   # install/configure Nextcloud
