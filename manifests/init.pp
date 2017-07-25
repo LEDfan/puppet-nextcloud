@@ -71,5 +71,13 @@ class nextcloud (
     user    => apache,
     minute  => '*/15'
   }
+  
+  if !defined(File["${::nextcloud::tmp_directory}/match.py"]) {
+    file { "${::nextcloud::tmp_directory}/match.py":
+      ensure => present,
+      path   => "${::nextcloud::tmp_directory}/match.py",
+      source => 'puppet:///modules/nextcloud/match.py',
+    }
+  }
 
 }

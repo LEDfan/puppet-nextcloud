@@ -4,13 +4,6 @@ define nextcloud::import_config ($file_name){
     ensure  => present,
     content => $file_name,
   }
-  if !defined(File["${::nextcloud::tmp_directory}/match.py"]) {
-    file { "${::nextcloud::tmp_directory}/match.py":
-      ensure => present,
-      path   => "${::nextcloud::tmp_directory}/match.py",
-      source => 'puppet:///modules/nextcloud/match.py',
-    }
-  }
   exec { "import-nc-config-${title}":
     command => "/usr/bin/php /var/www/html/nextcloud/occ config:import ${::nextcloud::tmp_directory}/nextcloud-import-config-${title}",
     user    => apache,
