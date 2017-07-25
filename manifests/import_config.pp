@@ -7,7 +7,7 @@ define nextcloud::import_config ($file_name){
   if !defined(File["${::nextcloud::tmp_directory}/match.py"]) {
     file { "${::nextcloud::tmp_directory}/match.py":
       ensure => present,
-      path   => "${::nextcloud::timp_directory}/match.py",
+      path   => "${::nextcloud::tmp_directory}/match.py",
       source => 'puppet:///modules/nextcloud/match.py',
     }
   }

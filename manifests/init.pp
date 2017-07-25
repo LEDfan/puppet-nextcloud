@@ -21,19 +21,20 @@ class nextcloud (
     ensure => directory
   }->
   file { '/var/nextcloud/tmp':
-    ensure => directory
+    ensure => directory,
+    mode   => '0777'
   }
 
   # install Nextcloud RPM
   if ($install_method == 'filesystem') {
-    file { "${::nextcloud::timp_directory}/nextcloud-12.0.0-2.el7.centos.noarch.rpm":
+    file { "${::nextcloud::tmp_directory}/nextcloud-12.0.0-2.el7.centos.noarch.rpm":
       ensure => present,
       source => ['puppet:///modules/nextcloud/nextcloud-12.0.0-2.el7.centos.noarch.rpm']
     }->
     package { 'nextcloud':
       ensure   => present,
       provider => 'rpm',
-      source   => "${::nextcloud::timp_directory}/nextcloud-12.0.0-2.el7.centos.noarch.rpm"
+      source   => "${::nextcloud::tmp_directory}/nextcloud-12.0.0-2.el7.centos.noarch.rpm"
     }
   } elsif ($install_method == 'repo') {
     package { 'nextcloud':
