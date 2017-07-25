@@ -10,8 +10,6 @@ class nextcloud (
   $data_dir           = '/srv/nextcloud-data',
   $create_data_dir    = true, # data_dir parameter is still needed
   $database_host      = undef,
-  # wether to redirect non ssl traffic to ssl, or support access using non-ssl access
-  $redirect_ssl       = true,
   $trusted_domains    = [],
   $install_method     = 'filesystem' # can be filesystem or repo
   ) {
