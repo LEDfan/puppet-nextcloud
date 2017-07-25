@@ -16,17 +16,24 @@ class nextcloud (
 
   $all_trusted_domains = concat($trusted_domains, $servername)
 
+  $tmp_directory = '/var/nextcloud/tmp'
+  file { '/var/nextcloud':
+    ensure => directory
+  }->
+  file { '/var/nextcloud/tmp':
+    ensure => directory
+  }
 
   # install Nextcloud RPM
   if ($install_method == 'filesystem') {
-    file { '/tmp/nextcloud-12.0.0-2.el7.centos.noarch.rpm':
+    file { "${::nextcloud::timp_directory}/nextcloud-12.0.0-2.el7.centos.noarch.rpm":
       ensure => present,
       source => ['puppet:///modules/nextcloud/nextcloud-12.0.0-2.el7.centos.noarch.rpm']
     }->
     package { 'nextcloud':
       ensure   => present,
       provider => 'rpm',
-      source   => '/tmp/nextcloud-12.0.0-2.el7.centos.noarch.rpm'
+      source   => "${::nextcloud::timp_directory}/nextcloud-12.0.0-2.el7.centos.noarch.rpm"
     }
   } elsif ($install_method == 'repo') {
     package { 'nextcloud':
