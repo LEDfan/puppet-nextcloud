@@ -4,7 +4,7 @@ define nextcloud::import_ca (
   ){
   file { "${::nextcloud::tmp_directory}/import-ca-${title}.cert":
     ensure  => present,
-    source  => $ca_cert_path,
+    content => $ca_cert_path,
     require => Exec['install-nextcloud']
   }->
   exec { 'import-ca-file':
