@@ -4,6 +4,7 @@ class nextcloud::configure_ldap (
   $ldap_base,
   $ldap_dn,
   $ldap_group_filter,
+  $ldap_group_member_assoc_attribute  = 'memberUID',
   $ldap_host,
   $ldap_login_filter,
   $ldap_userlist_filter) {
