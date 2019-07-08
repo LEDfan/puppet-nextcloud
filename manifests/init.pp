@@ -11,7 +11,8 @@ class nextcloud (
   $create_data_dir    = true, # data_dir parameter is still needed
   $database_host      = undef,
   $trusted_domains    = [],
-  $install_method     = 'filesystem' # can be filesystem or repo
+  $install_method     = 'filesystem', # can be filesystem or repo
+  $ensure_version     = undef, # if install from repo ensure this version
   ) {
 
   $all_trusted_domains = concat($trusted_domains, $servername)
@@ -37,9 +38,16 @@ class nextcloud (
       source   => "${::nextcloud::tmp_directory}/nextcloud-12.0.0-2.el7.centos.noarch.rpm"
     }
   } elsif ($install_method == 'repo') {
-    package { 'nextcloud':
-      ensure   => present,
-      provider => 'yum'
+    if ($ensure_version) {
+      package { 'nextcloud':
+        ensure   => $ensure_version,
+        provider => 'yum'
+      }
+    } else {
+      package { 'nextcloud':
+        ensure   => present,
+        provider => 'yum'
+      }
     }
   } else {
     fail('Install_method is not source or repo') # TODO use proper validation in the header
@@ -71,7 +79,7 @@ class nextcloud (
     user    => apache,
     minute  => '*/15'
   }
-  
+
   if !defined(File["${::nextcloud::tmp_directory}/match.py"]) {
     file { "${::nextcloud::tmp_directory}/match.py":
       ensure => present,
